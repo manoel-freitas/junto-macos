@@ -1,7 +1,9 @@
 import "../styles/tokens.css";
 import "./shell.css";
 import { mountBalloon } from "../ju/balloon";
-import { juCssClass, type JuVisualState } from "../ju/state";
+import { type JuVisualState } from "../ju/state";
+import { applyJuShellClasses } from "./shell-state";
+import { GestureTrigger } from "./gesture-trigger";
 import {
   clearAlertTimers,
   escalateToLevel2,
@@ -19,10 +21,14 @@ let alertGate: AlertGate = initialAlertGate();
 let dismissBalloon: (() => void) | null = null;
 let juVisible = true;
 let soundEnabled = false;
+let noRecolor = false;
 
 function setJuState(state: JuVisualState, level?: number): void {
-  shell.className = `ju-shell ${juCssClass(state)}`;
-  if (level && level >= 2) shell.classList.add("ju--level-2");
+  applyJuShellClasses(shell, state, {
+    level2: level !== undefined && level >= 2,
+    noRecolor,
+  });
+  void GestureTrigger.fire(state);
 }
 
 async function startDrag(ev: MouseEvent): Promise<void> {
@@ -162,12 +168,32 @@ async function bootstrap(): Promise<void> {
       });
     });
 
+    await listen<{ noRecolor?: boolean }>("ju-live2d-reload", (ev) => {
+      if (ev.payload.noRecolor !== undefined) {
+        noRecolor = ev.payload.noRecolor;
+        shell.classList.toggle("ju--no-recolor", noRecolor);
+      }
+      reloadOlvtIframe();
+    });
+    await listen<{ noRecolor?: boolean }>("ju-appearance", (ev) => {
+      if (ev.payload.noRecolor !== undefined) {
+        noRecolor = ev.payload.noRecolor;
+        shell.classList.toggle("ju--no-recolor", noRecolor);
+      }
+    });
+
     void invoke("ju_pet_ready");
     void reportHitRegion();
     new ResizeObserver(() => void reportHitRegion()).observe(shell);
   } catch {
     setJuState("idle");
   }
+}
+
+function reloadOlvtIframe(): void {
+  const olvt = document.querySelector("#ju-olvt") as HTMLIFrameElement;
+  if (!olvt) return;
+  olvt.src = `http://127.0.0.1:12393/?junto=${Date.now()}`;
 }
 
 const olvt = document.querySelector("#ju-olvt") as HTMLIFrameElement;

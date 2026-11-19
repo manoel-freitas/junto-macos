@@ -28,7 +28,7 @@ export MODELSCOPE_CACHE="$VENDOR/models"
 
 cd "$VENDOR"
 if command -v uv >/dev/null 2>&1; then
-  exec uv run python run_server.py
+  exec uv run python "$ROOT/overlay/olvt/run_junto.py"
 else
   echo "uv não encontrado; instale https://docs.astral.sh/uv/" >&2
   exit 1

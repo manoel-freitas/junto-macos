@@ -548,7 +548,33 @@ function render(): void {
   }
 }
 
+async function openAparencia(): Promise<void> {
+  try {
+    const { WebviewWindow } = await import("@tauri-apps/api/webviewWindow");
+    const existing = await WebviewWindow.getByLabel("ajustes");
+    if (existing) {
+      await existing.show();
+      await existing.setFocus();
+      return;
+    }
+    const win = new WebviewWindow("ajustes", {
+      url: "/aparencia.html",
+      title: "Junto — Ajustes",
+      width: 1120,
+      height: 780,
+    });
+    await win.show();
+  } catch {
+    window.open("/aparencia.html", "_blank");
+  }
+}
+
 function onKeyDown(ev: KeyboardEvent): void {
+  if (ev.altKey && ev.key === "a") {
+    void openAparencia();
+    ev.preventDefault();
+    return;
+  }
   if (ev.altKey && ev.key === "d") {
     settingsView = settingsView === "distraction" ? null : "distraction";
     render();

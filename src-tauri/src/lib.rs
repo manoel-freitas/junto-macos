@@ -1,3 +1,4 @@
+mod aparencia;
 mod automation;
 mod logstore;
 mod panel;
@@ -140,6 +141,13 @@ pub fn run() {
             pet::ju_mute_status,
             automation::distraction_response,
             automation::automation_permission_hint,
+            aparencia::aparencia_status,
+            aparencia::aparencia_read_model3,
+            aparencia::aparencia_install,
+            aparencia::aparencia_cancel,
+            aparencia::aparencia_commit,
+            aparencia::aparencia_preview,
+            aparencia::aparencia_trigger_gesture,
         ])
         .setup(|app| {
             set_accessory_policy();

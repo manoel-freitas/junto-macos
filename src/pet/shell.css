@@ -11,8 +11,12 @@ body.pet-root {
   height: 128px;
 }
 
-.ju-shell.ju--idle .ju-olvt {
+.ju-shell.ju--idle:not(.ju--no-recolor) .ju-olvt {
   filter: saturate(0.85);
+}
+
+.ju-shell.ju--no-recolor .ju-olvt {
+  filter: none;
 }
 
 .ju-shell.ju--working {
