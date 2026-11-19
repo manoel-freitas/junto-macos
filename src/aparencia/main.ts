@@ -217,6 +217,9 @@ async function boot(): Promise<void> {
     return;
   }
 
+  imagesLoaded = true;
+  machine = AparenciaMachine.imagesReady(machine);
+
   unlisten = AparenciaBridge.listenProgress(
     (id, received, total) => {
       if (machine.downloadId === id) {
@@ -226,36 +229,6 @@ async function boot(): Promise<void> {
     },
     (done) => void afterInstall(done),
   );
-
-  const imgs = Catalog.all.map((e) => e.thumbUrl);
-  let done = 0;
-  const finish = () => {
-    done += 1;
-    if (done >= imgs.length) {
-      imagesLoaded = true;
-      if (!demoEstado) {
-        machine = AparenciaMachine.imagesReady(machine);
-      } else if (demoEstado === "carregando") {
-        machine = AparenciaMachine.imagesReady(machine);
-      }
-      render();
-    }
-  };
-  for (const url of imgs) {
-    const img = new Image();
-    img.onload = finish;
-    img.onerror = finish;
-    img.src = url;
-  }
-  setTimeout(() => {
-    if (!imagesLoaded) {
-      imagesLoaded = true;
-      if (!demoEstado || demoEstado === "carregando") {
-        machine = AparenciaMachine.imagesReady(machine);
-      }
-      render();
-    }
-  }, 2500);
 
   render();
 }
