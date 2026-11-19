@@ -277,6 +277,27 @@ fn save_aparencia(data: &AparenciaFile) -> Result<(), String> {
     atomic_write(&aparencia_path(), &bytes)
 }
 
+fn post_gesture(ju_state: &str) -> Result<(), String> {
+    let client = reqwest::blocking::Client::builder()
+        .timeout(std::time::Duration::from_secs(5))
+        .build()
+        .map_err(|e| e.to_string())?;
+    let res = client
+        .post("http://127.0.0.1:12393/junto/gesture")
+        .json(&serde_json::json!({ "juState": ju_state }))
+        .send()
+        .map_err(|e| e.to_string())?;
+    if !res.status().is_success() {
+        return Err(format!("gesture OLVT {}", res.status()));
+    }
+    Ok(())
+}
+
+#[tauri::command]
+pub fn aparencia_trigger_gesture(ju_state: String) -> Result<(), String> {
+    post_gesture(&ju_state)
+}
+
 fn post_live2d_switch(model_name: &str) -> Result<(), String> {
     let client = reqwest::blocking::Client::builder()
         .timeout(std::time::Duration::from_secs(8))
@@ -677,11 +698,12 @@ pub fn aparencia_preview(app: AppHandle, payload: CommitPayload) -> Result<(), S
         let Some(inst) = restore else {
             return;
         };
-        let _ = post_live2d_switch(&inst.olvt_name);
-        let _ = app2.emit(
-            "ju-live2d-reload",
-            serde_json::json!({ "noRecolor": inst.no_recolor }),
-        );
+        if post_live2d_switch(&inst.olvt_name).is_ok() {
+            let _ = app2.emit(
+                "ju-live2d-reload",
+                serde_json::json!({ "noRecolor": inst.no_recolor }),
+            );
+        }
     });
     Ok(())
 }

@@ -147,6 +147,7 @@ pub fn run() {
             aparencia::aparencia_cancel,
             aparencia::aparencia_commit,
             aparencia::aparencia_preview,
+            aparencia::aparencia_trigger_gesture,
         ])
         .setup(|app| {
             set_accessory_policy();

@@ -10,28 +10,17 @@ from pathlib import Path
 import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
+OVERLAY = Path(__file__).resolve().parent
 VENDOR = ROOT / "vendor" / "Open-LLM-VTuber"
 TEMPLATE = VENDOR / "config_templates" / "conf.default.yaml"
 OUT = VENDOR / "conf.yaml"
 
-def aparencia_path() -> Path:
-    if os.environ.get("JUNTO_APARENCIA"):
-        return Path(os.environ["JUNTO_APARENCIA"])
-    if sys.platform == "darwin":
-        home = os.environ.get("HOME")
-        if home:
-            return Path(home) / "Library/Application Support/com.manoelfreitas.junto/aparencia.json"
-    return ROOT / "run" / "aparencia.json"
+sys.path.insert(0, str(OVERLAY))
+from aparencia_io import aparencia_path, load_aparencia  # noqa: E402
 
 
 def resolve_live2d_name() -> str:
-    path = aparencia_path()
-    if not path.is_file():
-        return "mao_pro"
-    try:
-        data = json.loads(path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError:
-        return "mao_pro"
+    data = load_aparencia()
     active = data.get("activeId", "mao")
     installed = data.get("installed", {})
     row = installed.get(active)
@@ -51,16 +40,11 @@ def merge_model_dict() -> None:
     except (FileNotFoundError, json.JSONDecodeError):
         current = []
     by_name = {e.get("name"): e for e in current if isinstance(e, dict) and e.get("name")}
-    path = aparencia_path()
-    if path.is_file():
-        try:
-            data = json.loads(path.read_text(encoding="utf-8"))
-            for row in data.get("installed", {}).values():
-                md = row.get("modelDict")
-                if isinstance(md, dict) and md.get("name"):
-                    by_name[md["name"]] = md
-        except json.JSONDecodeError:
-            pass
+    data = load_aparencia()
+    for row in data.get("installed", {}).values():
+        md = row.get("modelDict")
+        if isinstance(md, dict) and md.get("name"):
+            by_name[md["name"]] = md
     out = list(by_name.values())
     tmp = dict_path.with_suffix(".json.tmp")
     tmp.write_text(json.dumps(out, ensure_ascii=False, indent=4), encoding="utf-8")
