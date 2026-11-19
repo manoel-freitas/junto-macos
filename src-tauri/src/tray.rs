@@ -30,6 +30,7 @@ pub fn build_tray(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
             &MenuItem::with_id(app, "ju_m", "Ju tamanho M", true, None::<&str>)?,
             &MenuItem::with_id(app, "ju_l", "Ju tamanho G", true, None::<&str>)?,
             &MenuItem::with_id(app, "ju_toggle", "Mostrar/ocultar Ju (⌥⌘J)", true, None::<&str>)?,
+            &MenuItem::with_id(app, "ju_mute", "Silenciar Ju 1h (⌥⌘M)", true, None::<&str>)?,
         ],
     )?;
 
@@ -50,6 +51,9 @@ pub fn build_tray(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
             }
             "ju_toggle" => {
                 let _ = pet::ju_toggle_visible(app.clone());
+            }
+            "ju_mute" => {
+                let _ = pet::ju_mute_hours(&app, 1.0);
             }
             _ => {}
         })

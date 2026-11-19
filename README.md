@@ -4,21 +4,36 @@ Companion de foco na barra de menu — **uso pessoal**. Se você um dia publicar
 
 Repositório: [github.com/manoel-freitas/junto-macos](https://github.com/manoel-freitas/junto-macos)
 
+**Documentação (MkDocs):** [manoel-freitas.github.io/junto-macos](https://manoel-freitas.github.io/junto-macos/)
+
 ## O que é
 
 App **sem janela principal**: popover de **320 px** sob o ícone da barra + **Ju**, pet de desktop sempre visível (janela Tauri transparente, always-on-top). Exatamente **três check-ins** por sessão (meta no início, meio da sessão, fim). Pausa mostra só **"Pausado. Sem pressa."** — sem streak nem bronca.
 
 - **Accessory** + `LSUIElement`: não aparece no Dock; check-in automático não rouba foco do editor.
 - **Ju** fica no canto da tela com Live2D do [Open-LLM-VTuber-Web](https://github.com/Open-LLM-VTuber/Open-LLM-VTuber-Web) **v1.2.1** (`build:web`), via sidecar — **sem Electron**.
-- Cliques passam pela janela da Ju exceto no corpo (arraste para mover). **⌥⌘J** mostra/oculta; tamanhos P/M/G no menu da barra.
+- Cliques passam pela janela da Ju exceto no corpo (arraste para mover). **⌥⌘J** mostra/oculta; **⌥⌘M** silencia Ju por 1 h; tamanhos P/M/G no menu da barra.
 - Estados de sistema (motor ausente, carregando, microfone) **nunca impedem** de começar — só texto/teclado.
+- **Autostart** no login (`tauri-plugin-autostart`, `MacosLauncher::LaunchAgent`). Ju inicia em repouso no canto. Ajuste em **⌥I**.
+
+## Convites proativos
+
+Ju convida fora das sessões que você abre: ~**2 min** após o login, no **primeiro desbloqueio** do dia, e após **15 min** sem sessão — sempre no **horário de trabalho** (padrão seg–sex 9–18, editável em **⌥I**).
+
+Balão: *"Bora começar? O que você vai terminar agora?"* — **Começar (1)**, **Daqui a 15 min (2)**, **Hoje não (3)**. Mín. 45 min entre convites; máx. 3/dia; ignorar não é punido; três sem resposta ou "Hoje não" → silêncio até amanhã.
+
+Quieto fora do horário, em reunião ou tela cheia.
+
+## Foco do macOS — Plan B
+
+O Junto **não** usa `INFocusStatusCenter` (Communication Notifications exige perfil Apple Developer Program; app pessoal ad-hoc não tem entitlement confiável). Em vez disso: reunião + tela cheia + horário de trabalho + mute manual **⌥⌘M** (1 h). Detalhes na [documentação](https://manoel-freitas.github.io/junto-macos/convites/).
 
 ## Arquitetura
 
 ```text
 Barra (tray) → popover 320px (8 telas + ajustes)
             → janela Ju 96–160px (OLVT :12393 + balão HTML)
-Rust        → presença (reunião), pet, Automation opcional, log
+Rust        → presença (reunião, tela cheia), autostart, pet, Automation opcional, log
 Sidecar     → Open-LLM-VTuber v1.2.1 (submodule pinado)
 ```
 
@@ -43,13 +58,13 @@ Você é meu parceiro de foco numa chamada de vídeo. Fale em português, frases
 4. Quando eu disser "acabei", pergunte: "Saiu? Sim, parcial ou não?" e encerre com 1 frase gentil, sem cobrança.
 ```
 
-**Desligado no Junto:** fala proativa fora dos check-ins, câmera, captura de tela. Título/URL de abas **não** vão ao LLM.
+**Desligado no Junto:** fala proativa fora dos check-ins e convites, câmera, captura de tela. Título/URL de abas **não** vão ao LLM.
 
 ## Ju — pet desktop
 
 - Estados: `idle`, `working`, `calling`, `pause`, `done`, `needs-adjustment`.
 - Escada de alerta: (1) aceno + balão; (2) após 20 s, pulinho (`prefers-reduced-motion` respeitado); (3) som só se o usuário ativar. **Máx. 1 alerta / 10 min**.
-- Some em tela cheia, reunião, compartilhamento (heurística) e modo Foco (best-effort); alertas entram em fila.
+- Some em tela cheia, reunião e durante mute **⌥⌘M**; alertas entram em fila.
 
 ## Distração (opcional, OFF por padrão)
 
@@ -93,6 +108,13 @@ bash scripts/olvt.sh
 bash scripts/build-ju-web.sh   # build OLVT-Web v1.2.1
 ```
 
+## Documentação local
+
+```bash
+pip install mkdocs-material
+mkdocs serve
+```
+
 ## Privacidade
 
 - Nome do app em primeiro plano (`NSWorkspace`) pode ir ao log de sessão local.
@@ -100,13 +122,9 @@ bash scripts/build-ju-web.sh   # build OLVT-Web v1.2.1
 - Sessões: `~/Library/Application Support/com.manoelfreitas.junto/sessions.json`
 - Ju: posição/tamanho em `pet.json` no mesmo diretório.
 
-## Foco do macOS e reuniões
+## UI (8 telas do popover + ajustes)
 
-Check-in do meio adia em apps de reunião (Zoom, FaceTime, Teams, Webex, Skype). Meet no browser aparece como nome do navegador. Modo Foco é best-effort.
-
-## UI (8 telas do popover)
-
-Ícone da barra: ○○ parado · ●● sessão + tempo · pulso no check-in · ●○ pausa · ●! ajuste (cor nunca é a única pista).
+Ícone da barra: ○○ parado · ●● sessão + tempo · pulso no check-in · ●○ pausa · ●! ajuste (cor nunca é a única pista). Ajustes: distração (⌥D), bem-estar (⌥B), convites (⌥I).
 
 ## Licença
 

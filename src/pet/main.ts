@@ -80,10 +80,32 @@ async function bootstrap(): Promise<void> {
       balloon?: string;
       alert?: boolean;
       level?: number;
+      proactiveInvite?: boolean;
     }>("ju-state", (ev) => {
-      const { juState, balloon, alert, level } = ev.payload;
+      const { juState, balloon, alert, level, proactiveInvite } = ev.payload;
       setJuState(juState, level);
-      if (balloon) {
+      if (balloon && proactiveInvite) {
+        showBalloon(balloon, {
+          ms: 60_000,
+          actions: [
+            {
+              label: "Começar",
+              key: "1",
+              onClick: () => void invoke("invite_response", { choice: "start" }),
+            },
+            {
+              label: "Daqui a 15 min",
+              key: "2",
+              onClick: () => void invoke("invite_response", { choice: "snooze15" }),
+            },
+            {
+              label: "Hoje não",
+              key: "3",
+              onClick: () => void invoke("invite_response", { choice: "not_today" }),
+            },
+          ],
+        });
+      } else if (balloon) {
         showBalloon(balloon, { ms: juState === "pause" ? 10_000 : undefined });
       } else if (!balloon) {
         dismissBalloon?.();

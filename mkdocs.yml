@@ -1,0 +1,44 @@
+site_name: Junto
+site_description: Companion de foco no macOS — documentação
+site_url: https://manoel-freitas.github.io/junto-macos/
+repo_url: https://github.com/manoel-freitas/junto-macos
+repo_name: manoel-freitas/junto-macos
+theme:
+  name: material
+  language: pt
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Modo escuro
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Modo claro
+nav:
+  - Início: index.md
+  - Instalação no Mac: instalacao.md
+  - Primeira sessão: primeira-sessao.md
+  - A Ju: ju.md
+  - Convites e horário: convites.md
+  - Check-ins e atalhos: atalhos.md
+  - Perceber distrações: distracao.md
+  - Lembretes saudáveis: bemestar.md
+  - Permissões do macOS: permissoes.md
+  - Privacidade: privacidade.md
+  - Problemas comuns: faq.md
+  - Para desenvolvedores: dev.md
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - toc:
+      permalink: true
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/manoel-freitas/junto-macos

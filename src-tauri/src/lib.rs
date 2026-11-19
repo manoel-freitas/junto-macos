@@ -3,6 +3,7 @@ mod logstore;
 mod panel;
 mod pet;
 mod presence;
+mod screen;
 mod sidecar;
 mod tray;
 
@@ -69,12 +70,20 @@ fn junto_sync(app: tauri::AppHandle, payload: Value) -> Result<(), String> {
     if let Some(ju_state) = payload.get("juState") {
         let balloon = payload.get("juBalloon").and_then(|v| v.as_str());
         let alert = payload.get("juAlert").and_then(|v| v.as_bool()).unwrap_or(false);
+        let proactive = payload
+            .get("juProactiveInvite")
+            .and_then(|v| v.as_bool())
+            .unwrap_or(false);
         let body = serde_json::json!({
             "juState": ju_state,
             "balloon": balloon,
             "alert": alert,
+            "proactiveInvite": proactive,
         });
         let _ = pet::emit_ju_state(&app, body);
+    }
+    if payload.get("action").and_then(|v| v.as_str()) == Some("show_popover") {
+        let _ = panel::show_popover_with_focus(&app);
     }
     if let Some(enabled) = payload
         .get("distractionEnabled")
@@ -91,6 +100,12 @@ fn presence_snapshot() -> presence::PresenceSnapshot {
 }
 
 #[tauri::command]
+fn invite_response(app: tauri::AppHandle, choice: String) -> Result<(), String> {
+    let _ = app.emit("ju-invite-action", serde_json::json!({ "choice": choice }));
+    Ok(())
+}
+
+#[tauri::command]
 fn engine_status() -> serde_json::Value {
     serde_json::json!({
         "olvt": sidecar::health_port(),
@@ -100,19 +115,29 @@ fn engine_status() -> serde_json::Value {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    tauri::Builder::default()
+    let mut builder = tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
-        .plugin(tauri_plugin_global_shortcut::Builder::new().build())
+        .plugin(tauri_plugin_global_shortcut::Builder::new().build());
+    #[cfg(target_os = "macos")]
+    {
+        builder = builder.plugin(tauri_plugin_autostart::init(
+            tauri_plugin_autostart::MacosLauncher::LaunchAgent,
+            None,
+        ));
+    }
+    builder
         .invoke_handler(tauri::generate_handler![
             junto_sync,
             presence_snapshot,
             engine_status,
+            invite_response,
             pet::ju_hit_region,
             pet::ju_pet_ready,
             pet::ju_set_size,
             pet::ju_toggle_visible,
             pet::set_distraction_enabled,
             pet::get_pet_prefs,
+            pet::ju_mute_status,
             automation::distraction_response,
             automation::automation_permission_hint,
         ])
@@ -137,10 +162,18 @@ pub fn run() {
                     }
                     let _ = handle;
                 })?;
+                let mute =
+                    Shortcut::new(Some(Modifiers::ALT | Modifiers::SUPER), Code::KeyM);
+                app.global_shortcut().on_shortcut(mute, move |app, _s, event| {
+                    if event.state == ShortcutState::Pressed {
+                        let _ = pet::ju_mute_hours(&app, 1.0);
+                    }
+                })?;
             }
             let handle = app.handle().clone();
             std::thread::spawn(move || loop {
                 std::thread::sleep(std::time::Duration::from_secs(2));
+                screen::poll_screen_lock(&handle);
                 let snap = presence::snapshot();
                 let engine = serde_json::json!({
                     "olvt": sidecar::health_port(),

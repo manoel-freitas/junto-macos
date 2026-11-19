@@ -21,6 +21,8 @@ pub struct PetPrefs {
     pub y: Option<f64>,
     pub distraction_enabled: bool,
     pub visible: bool,
+    #[serde(default)]
+    pub ju_muted_until: Option<i64>,
 }
 
 impl Default for PetPrefs {
@@ -202,9 +204,33 @@ fn flush_alert_queue(app: &AppHandle) -> Result<(), String> {
     Ok(())
 }
 
+pub fn ju_mute_hours(app: &AppHandle, hours: f64) -> Result<(), String> {
+    let until = chrono::Utc::now().timestamp_millis() + (hours * 3_600_000.0) as i64;
+    let mut prefs = load_prefs();
+    prefs.ju_muted_until = Some(until);
+    save_prefs(&prefs)?;
+    let _ = app.emit(
+        "ju-mute",
+        serde_json::json!({ "until": until }),
+    );
+    Ok(())
+}
+
+#[tauri::command]
+pub fn ju_mute_status() -> Result<Option<i64>, String> {
+    Ok(load_prefs().ju_muted_until)
+}
+
+fn ju_is_muted() -> bool {
+    if let Some(until) = load_prefs().ju_muted_until {
+        return chrono::Utc::now().timestamp_millis() < until;
+    }
+    false
+}
+
 fn should_hide_ju(app: &AppHandle) -> bool {
     let snap = crate::presence::snapshot();
-    if snap.meeting || snap.focus {
+    if snap.meeting || snap.fullscreen || ju_is_muted() {
         return true;
     }
     #[cfg(target_os = "macos")]

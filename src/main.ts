@@ -52,6 +52,24 @@ import {
   loadWellnessToggles,
   type WellnessToggles,
 } from "./wellness/toggles";
+import {
+  INVITE_BALLOON,
+  onInviteIgnored,
+  onInviteResponse,
+  onInviteShown,
+  onSessionStarted,
+  pickInviteTrigger,
+  rollDailyState,
+  type InviteResponse,
+} from "./invites/machine";
+import { loadPersistedInviteState, savePersistedInviteState } from "./invites/persist";
+import {
+  isWithinWorkHours,
+  loadWorkHoursFromStorage,
+  saveWorkHours,
+  type WorkHoursConfig,
+} from "./invites/work-hours";
+import { renderInviteSettings } from "./screens/invite-settings";
 
 const MID_TIMEOUT_MS = 20_000;
 const LOAD_TIMEOUT_MS = 120_000;
@@ -62,13 +80,27 @@ let midTimer: ReturnType<typeof setTimeout> | null = null;
 let tickTimer: ReturnType<typeof setInterval> | null = null;
 let loadStartedAt: number | null = null;
 const sessionLog: SessionRecord[] = [];
-let presence = { meeting: false, focus: false, activeApp: "" };
+let presence = {
+  meeting: false,
+  focus: false,
+  fullscreen: false,
+  activeApp: "",
+};
 let engineStatus: MissingStatus = { juntoOk: true, olvtOk: false, ollamaOk: false };
 let loadPercent = 0;
 let loadError: string | null = null;
 let alertGate: AlertGate = initialAlertGate();
 let juCalling = false;
-let settingsView: null | "distraction" | "wellness" = null;
+let settingsView: null | "distraction" | "wellness" | "invites" = null;
+let workHours: WorkHoursConfig = loadWorkHoursFromStorage();
+let inviteState = loadPersistedInviteState();
+let idleSince: number | null = Date.now();
+let proactiveInviteLive = false;
+let inviteDismissTimer: ReturnType<typeof setTimeout> | null = null;
+let unlockedJustNow = false;
+let juMutedUntil: number | null = null;
+let autostartOn = true;
+let autostartBusy = false;
 let distractionEnabled = false;
 let distractionCategories = new Set(
   DISTRACTION_CATEGORIES.map((c) => c.id),
@@ -103,6 +135,9 @@ function juBalloonForPhase(s: SessionState): string | undefined {
 }
 
 function syncJu(s: SessionState, opts?: { alert?: boolean }): void {
+  if (proactiveInviteLive && s.phase === "start") {
+    return;
+  }
   const juState = juStateFromSession(s, { juCalling });
   notifyRust({
     juState,
@@ -110,6 +145,89 @@ function syncJu(s: SessionState, opts?: { alert?: boolean }): void {
     juAlert: opts?.alert ?? false,
     distractionEnabled,
   });
+}
+
+function inviteQuiet(now: number): boolean {
+  return (
+    !isWithinWorkHours(workHours, now) ||
+    presence.meeting ||
+    presence.fullscreen ||
+    (juMutedUntil !== null && now < juMutedUntil) ||
+    state.phase !== "start" ||
+    proactiveInviteLive
+  );
+}
+
+function clearInviteDismissTimer(): void {
+  if (inviteDismissTimer) {
+    clearTimeout(inviteDismissTimer);
+    inviteDismissTimer = null;
+  }
+}
+
+function clearProactiveInvite(): void {
+  clearInviteDismissTimer();
+  proactiveInviteLive = false;
+}
+
+function showProactiveInvite(now: number, trigger: ReturnType<typeof pickInviteTrigger>): void {
+  if (!trigger) return;
+  inviteState = onInviteShown(inviteState, now, trigger);
+  savePersistedInviteState(inviteState);
+  proactiveInviteLive = true;
+  notifyRust({
+    juState: "idle",
+    juBalloon: INVITE_BALLOON,
+    juAlert: true,
+    juProactiveInvite: true,
+  });
+  clearInviteDismissTimer();
+  inviteDismissTimer = setTimeout(() => {
+    if (!proactiveInviteLive) return;
+    inviteState = onInviteIgnored(inviteState, Date.now());
+    savePersistedInviteState(inviteState);
+    proactiveInviteLive = false;
+    syncJu(state);
+  }, 60_000);
+}
+
+function tickInvites(now = Date.now()): void {
+  inviteState = rollDailyState(inviteState, now);
+  if (state.phase !== "start") {
+    idleSince = null;
+  } else if (idleSince === null) {
+    idleSince = now;
+  }
+  if (inviteQuiet(now)) {
+    unlockedJustNow = false;
+    return;
+  }
+  const trigger = pickInviteTrigger(inviteState, {
+    now,
+    quiet: {
+      inWorkHours: isWithinWorkHours(workHours, now),
+      meeting: presence.meeting,
+      fullscreen: presence.fullscreen,
+      mutedUntil: juMutedUntil,
+      sessionActive: state.phase !== "start",
+    },
+    unlockedJustNow,
+    idleSince,
+  });
+  unlockedJustNow = false;
+  if (trigger) showProactiveInvite(now, trigger);
+}
+
+function handleInviteResponse(choice: InviteResponse): void {
+  const now = Date.now();
+  clearProactiveInvite();
+  inviteState = onInviteResponse(inviteState, now, choice);
+  savePersistedInviteState(inviteState);
+  if (choice === "start") {
+    notifyRust({ action: "show_popover" });
+    goalInput?.focus();
+  }
+  syncJu(state);
 }
 
 function syncTray(s: SessionState): void {
@@ -252,12 +370,25 @@ function renderSettingsPanel(): void {
       },
       () => notifyRust({ action: "open_automation_settings" }),
     );
-  } else {
+  } else if (settingsView === "wellness") {
     renderWellnessSettings(panel, wellness, (key, value) => {
       wellness = { ...wellness, [key]: value };
       state = setPreBreathPending(state, cueBeforeStart(wellness) !== null);
       renderSettingsPanel();
     });
+  } else {
+    renderInviteSettings(
+      panel,
+      workHours,
+      autostartOn,
+      autostartBusy,
+      (cfg) => {
+        workHours = cfg;
+        saveWorkHours(cfg);
+        renderSettingsPanel();
+      },
+      (on) => void setAutostartEnabled(on),
+    );
   }
   settingsHost.appendChild(panel);
 }
@@ -275,6 +406,9 @@ function render(): void {
           cueBeforeStart(wellness) !== null,
         );
         state = submitGoal(state, g);
+        inviteState = onSessionStarted(inviteState);
+        savePersistedInviteState(inviteState);
+        idleSince = null;
         if (state.phase === "session") startTick();
         render();
         syncTray(state);
@@ -425,10 +559,35 @@ function onKeyDown(ev: KeyboardEvent): void {
     render();
     return;
   }
+  if (ev.altKey && ev.key === "i") {
+    settingsView = settingsView === "invites" ? null : "invites";
+    render();
+    return;
+  }
+  if (proactiveInviteLive && state.phase === "start") {
+    if (ev.key === "1") {
+      handleInviteResponse("start");
+      ev.preventDefault();
+      return;
+    }
+    if (ev.key === "2") {
+      handleInviteResponse("snooze15");
+      ev.preventDefault();
+      return;
+    }
+    if (ev.key === "3") {
+      handleInviteResponse("not_today");
+      ev.preventDefault();
+      return;
+    }
+  }
   if (state.phase === "start" && ev.key === "Enter") {
     const g = goalInput?.value ?? state.goal;
     state = setPreBreathPending(state, cueBeforeStart(wellness) !== null);
     state = submitGoal(state, g);
+    inviteState = onSessionStarted(inviteState);
+    savePersistedInviteState(inviteState);
+    idleSince = null;
     if (state.phase === "session") startTick();
     render();
     syncTray(state);
@@ -524,9 +683,29 @@ export function __applyEngineEvent(ev: {
 export function __applyPresence(ev: {
   meeting: boolean;
   focus: boolean;
+  fullscreen?: boolean;
   activeApp: string;
 }): void {
-  presence = ev;
+  presence = { ...presence, ...ev, fullscreen: ev.fullscreen ?? false };
+}
+
+async function setAutostartEnabled(on: boolean): Promise<void> {
+  autostartBusy = true;
+  renderSettingsPanel();
+  try {
+    const { enable, disable, isEnabled } = await import(
+      "@tauri-apps/plugin-autostart"
+    );
+    if (on) await enable();
+    else await disable();
+    localStorage.setItem("junto.autostartPref", on ? "on" : "off");
+    autostartOn = await isEnabled();
+  } catch {
+    autostartOn = on;
+    localStorage.setItem("junto.autostartPref", on ? "on" : "off");
+  }
+  autostartBusy = false;
+  renderSettingsPanel();
 }
 
 export function __applyDistraction(ev: { choice: string }): void {
@@ -564,6 +743,21 @@ async function bootstrapTauri(): Promise<void> {
         __applyDistraction({ choice: ev.payload.distraction });
       }
     });
+    await listen<{ choice?: string }>("ju-invite-action", (ev) => {
+      const c = ev.payload.choice;
+      if (c === "start" || c === "snooze15" || c === "not_today") {
+        handleInviteResponse(c);
+      }
+    });
+    await listen("junto-unlock", () => {
+      unlockedJustNow = true;
+      tickInvites();
+    });
+    await listen<{ until?: number }>("ju-mute", (ev) => {
+      juMutedUntil = ev.payload.until ?? null;
+    });
+    const muted = (await invoke("ju_mute_status")) as number | null;
+    juMutedUntil = muted;
     await listen<{ message?: string }>("automation-permission", (ev) => {
       distractionWarn = ev.payload.message;
       render();
@@ -573,6 +767,18 @@ async function bootstrapTauri(): Promise<void> {
     };
     distractionEnabled = prefs.distractionEnabled ?? false;
     wellness = loadWellnessToggles(null);
+    workHours = loadWorkHoursFromStorage();
+    try {
+      const { isEnabled, enable } = await import("@tauri-apps/plugin-autostart");
+      const pref = localStorage.getItem("junto.autostartPref");
+      if (pref === null) {
+        await enable();
+        localStorage.setItem("junto.autostartPref", "on");
+      }
+      autostartOn = await isEnabled();
+    } catch {
+      autostartOn = true;
+    }
     const engine = (await invoke("engine_status")) as {
       olvt: boolean;
       ollama: boolean;
@@ -594,3 +800,5 @@ async function bootstrapTauri(): Promise<void> {
 void bootstrapTauri();
 render();
 syncTray(state);
+setInterval(() => tickInvites(), 30_000);
+tickInvites();

@@ -2,6 +2,8 @@
 pub struct PresenceSnapshot {
     pub meeting: bool,
     pub focus: bool,
+    pub fullscreen: bool,
+    pub screen_locked: bool,
     pub active_app: String,
 }
 
@@ -26,6 +28,8 @@ pub fn snapshot() -> PresenceSnapshot {
             return PresenceSnapshot {
                 meeting: false,
                 focus: false,
+                fullscreen: false,
+                screen_locked: crate::screen::is_screen_locked(),
                 active_app: String::new(),
             };
         }
@@ -36,9 +40,17 @@ pub fn snapshot() -> PresenceSnapshot {
         let meeting = MEETING_BUNDLE_PREFIXES
             .iter()
             .any(|p| bundle.starts_with(p));
+        let window: id = msg_send![app, focusWindow];
+        let mut fullscreen = false;
+        if window != nil {
+            let mask: u64 = msg_send![window, styleMask];
+            fullscreen = (mask & (1 << 14)) != 0;
+        }
         PresenceSnapshot {
             meeting,
             focus: false,
+            fullscreen,
+            screen_locked: crate::screen::is_screen_locked(),
             active_app: name,
         }
     }
@@ -65,6 +77,8 @@ pub fn snapshot() -> PresenceSnapshot {
     PresenceSnapshot {
         meeting: false,
         focus: false,
+        fullscreen: false,
+        screen_locked: false,
         active_app: String::new(),
     }
 }
