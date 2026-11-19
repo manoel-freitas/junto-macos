@@ -45,6 +45,6 @@ UI no navegador (mock Tauri): `npm run dev` → [http://localhost:1420/aparencia
 1. Popover/sessão emite `ju-state` → pet chama `aparencia_trigger_gesture` (Rust) → `POST /junto/gesture` com `juState`.
 2. `overlay/olvt/aparencia_io.py` resolve gesto a partir de `aparencia.json` do modelo **ativo** (`parada`, `chamando`, etc.).
 3. OLVT faz broadcast WebSocket `junto-motion` ou `junto-motion-idle` para todos os clientes.
-4. `junto_live2d_inject.js` (injetado no `index.html` do OLVT via `run_junto.py`) intercepta o WebSocket e chama `__JUNTO_REGISTER_LIVE2D_PLAY__` quando o frontend OLVT-Web v1.2.1 expuser o player.
+4. `junto_live2d_inject.js` (injetado no `index.html` do OLVT via `run_junto.py`) intercepta o WebSocket e chama `window.getLAppAdapter().startMotion(...)` (prioridades idle/normal do bundle v1.2.1). Se o modelo ainda não carregou, enfileira e repete até ~12 s. Override opcional: `__JUNTO_REGISTER_LIVE2D_PLAY__(fn)`. Lógica espelhada em `src/pet/olvt-inject-dispatch.ts`.
 
 Sem gesto mapeado → `junto-motion-idle` com `idleMotionGroupName` do `model_dict` / gesto `parada`.

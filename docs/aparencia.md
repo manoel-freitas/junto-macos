@@ -33,7 +33,7 @@ Abra Aparência, escolha **Mao** e **Usar a Mao**.
 
 ## Gestos no canto
 
-Quando a Ju muda de estado (sessão, pausa, chamando, etc.), o Junto tenta tocar o motion Live2D mapeado ao baixar o modelo. Se não houver gesto para aquele estado, o modelo fica no idle padrão.
+Quando a Ju muda de estado (sessão, pausa, chamando, etc.), o Junto toca o motion Live2D mapeado no pet (o OLVT expõe `getLAppAdapter()` e o inject do Junto dispara o motion automaticamente). Se não houver gesto para aquele estado, o modelo fica no idle padrão.
 
 ## Depois de reiniciar o Mac
 
