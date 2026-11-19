@@ -366,6 +366,33 @@
   
   
     <li class="md-nav__item">
+      <a href="../aparencia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Aparência
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../convites/" class="md-nav__link">
         
   
@@ -647,6 +674,28 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#aparencia-live2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aparência (Live2D)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gestos-da-ju-gap-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gestos da Ju (gap 1)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -714,6 +763,28 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#aparencia-live2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aparência (Live2D)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gestos-da-ju-gap-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gestos da Ju (gap 1)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -753,6 +824,22 @@ mkdocs<span class="w"> </span>serve
 <p>Deploy: workflow <code>.github/workflows/docs.yml</code> em push na <code>main</code>.</p>
 <h2 id="submodule-olvt">Submodule OLVT<a class="headerlink" href="#submodule-olvt" title="Permanent link">&para;</a></h2>
 <p>Pin v1.2.1 — veja <code>README.md</code> e <code>scripts/build-ju-web.sh</code>.</p>
+<h2 id="aparencia-live2d">Aparência (Live2D)<a class="headerlink" href="#aparencia-live2d" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Estado: <code>~/Library/Application Support/com.manoelfreitas.junto/aparencia.json</code> (dev Linux: <code>run/aparencia.json</code>).</li>
+<li>Modelos: <code>vendor/Open-LLM-VTuber/live2d-models/</code>.</li>
+<li>Troca em runtime: <code>POST http://127.0.0.1:12393/junto/live2d</code> com <code>{"modelName":"..."}</code> (hook em <code>overlay/olvt/run_junto.py</code>), depois o pet recarrega o iframe — <strong>sem</strong> <code>switch-config</code> do OLVT (não atualiza o cache de sessão do pet sozinho).</li>
+<li>Não use <code>switch-config</code> para a Ju: só afeta o cliente que enviou o WebSocket.</li>
+</ul>
+<p>UI no navegador (mock Tauri): <code>npm run dev</code> → <a href="http://localhost:1420/aparencia.html">http://localhost:1420/aparencia.html</a>. Query <code>?estado=carregando|baixando|falha|licenca</code> para screenshot de estados.</p>
+<h2 id="gestos-da-ju-gap-1">Gestos da Ju (gap 1)<a class="headerlink" href="#gestos-da-ju-gap-1" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Popover/sessão emite <code>ju-state</code> → pet chama <code>aparencia_trigger_gesture</code> (Rust) → <code>POST /junto/gesture</code> com <code>juState</code>.</li>
+<li><code>overlay/olvt/aparencia_io.py</code> resolve gesto a partir de <code>aparencia.json</code> do modelo <strong>ativo</strong> (<code>parada</code>, <code>chamando</code>, etc.).</li>
+<li>OLVT faz broadcast WebSocket <code>junto-motion</code> ou <code>junto-motion-idle</code> para todos os clientes.</li>
+<li><code>junto_live2d_inject.js</code> (injetado no <code>index.html</code> do OLVT via <code>run_junto.py</code>) intercepta o WebSocket e chama <code>window.getLAppAdapter().startMotion(...)</code> (prioridades idle/normal do bundle v1.2.1). Se o modelo ainda não carregou, enfileira e repete até ~12 s. Override opcional: <code>__JUNTO_REGISTER_LIVE2D_PLAY__(fn)</code>. Lógica espelhada em <code>src/pet/olvt-inject-dispatch.ts</code>.</li>
+</ol>
+<p>Sem gesto mapeado → <code>junto-motion-idle</code> com <code>idleMotionGroupName</code> do <code>model_dict</code> / gesto <code>parada</code>.</p>
 
 
 
