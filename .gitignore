@@ -1,0 +1,10 @@
+node_modules/
+dist/
+src-tauri/target/
+run/
+.DS_Store
+*.log
+vendor/Open-LLM-VTuber/conf.yaml
+vendor/Open-LLM-VTuber/logs/
+vendor/Open-LLM-VTuber/models/
+vendor/Open-LLM-VTuber/.venv/

@@ -1,0 +1,54 @@
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="base.css"><style>
+.desk{position:relative;height:300px;border-radius:12px;background:linear-gradient(#5b6b7c,#3d4a58);overflow:hidden}
+.mb{height:22px;background:rgba(255,255,255,.85);font-size:11px;display:flex;justify-content:flex-end;gap:12px;align-items:center;padding:0 10px}
+.win{position:absolute;left:18px;top:40px;width:250px;height:200px;background:#f4f4f4;border-radius:8px;opacity:.9}
+.ju{position:absolute;right:22px;bottom:18px}
+.bub{position:absolute;right:20px;bottom:128px;background:#FBF8F3;border-radius:12px;padding:10px 12px;font-size:12px;width:200px;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+.bub .btn{padding:4px 8px;font-size:11px}
+.perm{background:#FBF8F3;border-radius:14px;padding:22px;font-size:14px;line-height:1.5;height:300px}
+.perm .ok{color:#2E7D5B}.perm .no{color:#C2410C}
+</style></head><body>
+<h1>Junto — permissão do título, distração e lembretes saudáveis</h1>
+<div class="sub">Complemento das telas da Ju. Frequências são escolha de produto, não ciência (Dora, PLOS ONE 2022). Lembretes são conforto: nenhum texto promete render mais. Textos e arte ilustrativos.</div>
+<div class="grid">
+<div><div class="cap">1. Permissão de Automação, por navegador</div><div class="perm">
+<b>Quer que a Ju perceba distrações?</b><br><br>
+<span class="ok">✓ Ela pergunta ao Chrome/Safari só o site da aba ativa e compara com a sua lista, no Mac.</span><br>
+<span class="no">✗ O título nunca vai para a IA nem fica salvo.</span><br>
+<span class="no">✗ Nada de captura de tela.</span><br><br>
+<div class="muted">O macOS pede "Automação" uma vez por navegador.</div>
+<span class="btn pri">Abrir Ajustes</span><span class="btn">Agora não</span>
+<div class="muted" style="margin-top:8px">Negou? A Ju avisa 1 vez: "Sem acesso ao Chrome, não vou perceber distrações nele" + Abrir Ajustes. Todo o resto funciona.</div></div>
+<div class="note">Aparece só quando ele liga "Perceber distrações", nunca na primeira abertura. Dá para revogar no menu a qualquer hora.</div></div>
+
+<div><div class="cap">2. Distração detectada</div><div class="desk"><div class="mb"><b>●●</b> 14:05</div><div class="win"></div>
+<div class="bub"><b>Ainda no PR do login?</b><br><span class="btn pri">Voltando 1</span><span class="btn">É pausa 2</span><span class="btn">Mudei 3</span></div>
+<svg class="ju" width="110" height="110" viewBox="0 0 110 110"><ellipse cx="55" cy="100" rx="34" ry="6" fill="rgba(0,0,0,.25)"/><circle cx="55" cy="55" r="40" fill="#2E7D5B"/><circle cx="36" cy="50" r="6" fill="#FBF8F3"/><circle cx="62" cy="50" r="6" fill="#FBF8F3"/><circle cx="34" cy="51" r="3" fill="#1B1B1F"/><circle cx="60" cy="51" r="3" fill="#1B1B1F"/><path d="M42 72h18" stroke="#FBF8F3" stroke-width="3" stroke-linecap="round"/></svg></div>
+<div class="note">Após ~3 min seguidos em algo da lista, a Ju para de digitar e olha para ele. Nunca diz o nome do site. "É pausa" vira pausa sem cobrança. O log guarda só "distração, 10 min".</div></div>
+
+<div><div class="cap">3. Lista de distrações</div><div class="perm">
+<b>O que te puxa?</b><div class="muted">Lista inicial da pesquisa; você edita.</div><br>
+<span class="chip on">Vídeo curto</span><span class="chip on">Redes sociais</span><span class="chip on">Notícias</span><br><br><span class="chip">Compras</span><span class="chip">Jogos</span><span class="chip">+ adicionar</span><br><br>
+<div class="muted">Cada categoria agrupa sites e apps. Exemplos de itens dependem da pesquisa da Dora.</div></div>
+<div class="note">Categorias em vez de lista de URLs: mais fácil de manter e menos sensação de vigilância.</div></div>
+</div>
+
+<h2>Lembretes saudáveis: a Ju faz junto, só nas pausas naturais</h2>
+<div class="grid">
+<div><div class="cap">4. Água no fim da sessão</div><div class="desk"><div class="mb">○○</div><div class="win"></div>
+<div class="bub" style="width:170px"><b>Bloco feito. Um gole d'água?</b><br><span class="btn pri">Bebi 1</span><span class="btn">Depois 2</span></div>
+<svg class="ju" width="110" height="110" viewBox="0 0 110 110"><ellipse cx="55" cy="100" rx="34" ry="6" fill="rgba(0,0,0,.25)"/><circle cx="55" cy="55" r="40" fill="#2E7D5B"/><path d="M36 50q6-5 12 0M62 50q6-5 12 0" stroke="#FBF8F3" stroke-width="3" fill="none"/><rect x="70" y="58" width="16" height="26" rx="3" fill="#9fd3f0" stroke="#FBF8F3" stroke-width="2"/></svg></div>
+<div class="note">Depois do "Saiu?". Some em 15 s sem resposta, sem insistir.</div></div>
+
+<div><div class="cap">5. Alongar a cada 2 blocos</div><div class="desk"><div class="mb">○○</div><div class="win"></div>
+<div class="bub" style="width:170px"><b>Bora esticar 1 min?</b><br><span class="btn pri">Comigo 1</span><span class="btn">Pular 2</span></div>
+<svg class="ju" width="110" height="120" viewBox="0 0 110 120"><ellipse cx="55" cy="112" rx="30" ry="6" fill="rgba(0,0,0,.25)"/><ellipse cx="55" cy="66" rx="34" ry="42" fill="#2E7D5B"/><path d="M30 30l-14-22M80 30l14-22" stroke="#2E7D5B" stroke-width="9" stroke-linecap="round"/><path d="M38 60q6-5 12 0M60 60q6-5 12 0" stroke="#FBF8F3" stroke-width="3" fill="none"/></svg></div>
+<div class="note">A Ju se espreguiça; "Comigo" abre um timer de 60 s com a Ju fazendo o movimento.</div></div>
+
+<div><div class="cap">6. Respirar 1 min</div><div class="desk"><div class="mb">○○</div><div class="win"></div>
+<div class="bub" style="width:170px"><b>Inspira… solta.</b><div class="muted">0:42</div><span class="btn">Parar</span></div>
+<svg class="ju" width="120" height="120" viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" fill="none" stroke="#DDEFE5" stroke-width="3" stroke-dasharray="4 6"/><circle cx="60" cy="60" r="40" fill="#2E7D5B"/><path d="M42 56q6-5 12 0M66 56q6-5 12 0" stroke="#FBF8F3" stroke-width="3" fill="none"/></svg></div>
+<div class="note">O corpo cresce e encolhe no ritmo (4 s / 6 s). Com "Reduzir movimento", só o texto e o contador mudam. Opção extra: antes de começar a sessão.</div></div>
+</div>
+<div class="sub" style="margin-top:22px;font-size:13px">Regras: tudo desligável por item; lembretes contam no limite de 1 alerta a cada 10 min; nunca no meio do foco; respeitam modo Foco e reuniões; nenhum contador de "dias sem beber água".</div>
+</body></html>

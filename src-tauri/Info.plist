@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>LSUIElement</key>
+	<true/>
+	<key>NSAppleEventsUsageDescription</key>
+	<string>O Junto pode ler o endereço do site da aba ativa no Chrome ou Safari quando você liga “Perceber distrações”. O título e a URL não são enviados à nuvem nem guardados — só o tempo total do dia. Não usamos captura de tela.</string>
+</dict>
+</plist>

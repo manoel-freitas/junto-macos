@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=160, initial-scale=1" />
+    <title>Ju</title>
+    <link rel="stylesheet" href="/src/styles/tokens.css" />
+    <link rel="stylesheet" href="/src/pet/shell.css" />
+  </head>
+  <body class="pet-root">
+    <div id="ju-shell" class="ju-shell ju--idle">
+      <iframe
+        id="ju-olvt"
+        class="ju-olvt"
+        title="Ju Live2D"
+        src="http://127.0.0.1:12393/"
+      ></iframe>
+      <div id="ju-body-hit" class="ju-body-hit" aria-hidden="true"></div>
+      <div id="ju-balloon-host" class="ju-balloon-host" aria-live="polite"></div>
+    </div>
+    <script type="module" src="/src/pet/main.ts"></script>
+  </body>
+</html>

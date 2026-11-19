@@ -1,0 +1,122 @@
+body.pet-root {
+  margin: 0;
+  background: transparent;
+  overflow: hidden;
+  user-select: none;
+}
+
+.ju-shell {
+  position: relative;
+  width: 128px;
+  height: 128px;
+}
+
+.ju-shell.ju--idle .ju-olvt {
+  filter: saturate(0.85);
+}
+
+.ju-shell.ju--working {
+  --ju-accent: var(--green, #2e7d5b);
+}
+
+.ju-shell.ju--calling {
+  --ju-accent: var(--green, #2e7d5b);
+  animation: ju-wave 1.2s ease-in-out infinite;
+}
+
+.ju-shell.ju--pause {
+  --ju-accent: #e0a030;
+}
+
+.ju-shell.ju--done {
+  --ju-accent: var(--green, #2e7d5b);
+}
+
+.ju-shell.ju--needs-adjustment {
+  --ju-accent: #c2410c;
+}
+
+.ju-olvt {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  pointer-events: none;
+}
+
+.ju-body-hit {
+  position: absolute;
+  left: 18%;
+  top: 12%;
+  width: 64%;
+  height: 76%;
+  cursor: grab;
+  border-radius: 50%;
+}
+
+.ju-balloon-host {
+  position: absolute;
+  left: -200px;
+  bottom: 100%;
+  width: 190px;
+  pointer-events: auto;
+}
+
+.ju-balloon {
+  background: var(--paper, #fbf8f3);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  color: var(--ink, #1b1b1f);
+}
+
+.ju-balloon__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.ju-balloon__btn {
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--line, #ddd);
+  background: #fff;
+  cursor: pointer;
+}
+
+@keyframes ju-wave {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ju-shell.ju--calling {
+    animation: none;
+  }
+}
+
+.ju-shell.ju--level-2 {
+  animation: ju-hop 0.4s ease-out;
+}
+
+@keyframes ju-hop {
+  0% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}

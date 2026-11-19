@@ -1,0 +1,59 @@
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="base.css"></head><body>
+<h1>Junto — telas da barra de menu (wireframe médio, macOS)</h1>
+<div class="sub">App sem janela: tudo vive num popover de 320 px sob o ícone. O avatar só aparece no check-in ou quando chamado. Atalhos: 1 tecla por resposta. Textos ilustrativos.</div>
+<h2>Fluxo principal</h2>
+<div class="grid">
+<div><div class="cap">1. Início da sessão</div><div class="bar">🎧 <b>●○</b> 04:28</div><div class="pop">
+<b>O que você vai terminar agora?</b><div class="input">ex.: revisar o PR do login</div>
+<div class="muted">Duração</div><span class="chip on">25 min</span><span class="chip">50 min</span><span class="chip">livre</span><br><br>
+<span class="btn pri">Começar ⏎</span><div class="muted" style="margin-top:10px">Meta vaga? O app pede o 1º passo concreto.</div></div>
+<div class="note">Ícone: dois pontos lado a lado, contorno. Foco no campo ao abrir. Enter começa.</div></div>
+
+<div><div class="cap">2. Sessão ativa (silêncio)</div><div class="bar"><b style="color:#7fd1a8">●●</b> 18:42</div><div class="pop">
+<div class="muted">Terminando</div><b>Revisar o PR do login</b><div class="timer">18:42</div><div class="prog"><i style="width:26%"></i></div>
+<span class="btn">Pausar <span class="k">P</span></span><span class="btn pri">Acabei <span class="k">A</span></span>
+<div class="muted" style="margin-top:12px">Check-in em 6 min · Foco do macOS respeitado</div></div>
+<div class="note">Ícone preenchido com o tempo restante na barra. Nenhuma notificação até o check-in.</div></div>
+
+<div><div class="cap">3. Check-in do meio</div><div class="bar"><b style="color:#7fd1a8">●●</b> 12:30</div><div class="pop">
+<div class="av">avatar</div><b>Ainda no PR do login?</b><br><br>
+<span class="btn pri">Sim <span class="k">1</span></span><span class="btn">Mudei <span class="k">2</span></span><span class="btn">Pausar <span class="k">3</span></span>
+<div class="muted" style="margin-top:12px">Some sozinho em 20 s sem resposta, conta como "sim".</div></div>
+<div class="note">Popover abre sem roubar o foco do app atual. Em reunião ou Foco ativo, o check-in espera.</div></div>
+
+<div><div class="cap">4. Fim da sessão</div><div class="bar">🎧 <b>●○</b></div><div class="pop">
+<b>Saiu?</b><br><span class="btn pri">Sim <span class="k">1</span></span><span class="btn">Parcial <span class="k">2</span></span><span class="btn">Não <span class="k">3</span></span>
+<div style="margin-top:14px" class="muted">Hoje · 19/11/2026</div><div style="font-size:13px;line-height:1.5">3 sessões, 1h15 de foco<br>2 metas concluídas, 1 parcial<br>Mais longa: 50 min no PR do login</div>
+<br><span class="btn">Outra sessão</span></div>
+<div class="note">Resumo de 3 linhas, salvo só no Mac. Fecha com 1 frase gentil, sem cobrança.</div></div>
+
+<div><div class="cap">5. Pausado</div><div class="bar"><b style="color:#E0A030">●○</b> pausa</div><div class="pop">
+<b>Pausado. Sem pressa.</b><div class="timer" style="color:#9a6a12">12:30</div><div class="muted">O tempo para aqui. Pausar não quebra nada.</div><br>
+<span class="btn pri">Retomar <span class="k">R</span></span><span class="btn">Encerrar</span></div>
+<div class="note">Âmbar, nunca vermelho. Sem contador de sequência.</div></div>
+
+<div><div class="cap">Estados do ícone na barra</div><div class="pop" style="border-radius:14px">
+<div style="line-height:2.2;font-size:13px"><b>○○</b> parado, contorno<br><b style="color:#2E7D5B">●●</b> sessão ativa + tempo<br><b style="color:#2E7D5B">●</b><b style="color:#2E7D5B;opacity:.4">●</b> check-in, pisca 1 vez<br><b style="color:#E0A030">●○</b> pausado<br><b style="color:#C2410C">●!</b> precisa de ajuste</div></div>
+<div class="note">Template image monocromático no modo claro e escuro; cor só no estado, nunca como única pista (há texto/tempo junto).</div></div>
+</div>
+
+<h2>Estados de sistema obrigatórios</h2>
+<div class="grid">
+<div><div class="cap">6. VTuber ou Ollama não instalado</div><div class="bar"><b style="color:#C2410C">●!</b></div><div class="pop warn">
+<b>Falta o motor de voz e avatar</b><div class="muted" style="margin:8px 0">O Junto funciona só com texto enquanto isso.</div>
+<div style="font-size:13px;line-height:1.6">✓ Junto instalado<br>✗ Open-LLM-VTuber (servidor local)<br>✗ Ollama</div>
+<span class="btn pri">Instalar e verificar</span><span class="btn">Usar só texto</span></div>
+<div class="note">Mostra exatamente o que falta. Nunca bloqueia começar uma sessão.</div></div>
+
+<div><div class="cap">7. Carregando o modelo</div><div class="bar">○○ …</div><div class="pop">
+<b>Preparando sua dupla</b><div class="prog"><i style="width:62%"></i></div><div class="muted">Carregando modelo local · 62%</div><br>
+<span class="btn pri">Começar mesmo assim</span><div class="muted" style="margin-top:10px">O avatar entra quando estiver pronto.</div></div>
+<div class="note">Progresso real, não spinner infinito. Se passar de 2 min, vira erro com "tentar de novo".</div></div>
+
+<div><div class="cap">8. Microfone negado</div><div class="bar">🎧 <b>●○</b></div><div class="pop warn">
+<b>Sem acesso ao microfone</b><div class="muted" style="margin:8px 0">Você ainda pode responder pelo teclado. Voz é opcional.</div>
+<span class="btn pri">Abrir Ajustes do Sistema</span><span class="btn">Seguir no teclado</span></div>
+<div class="note">Leva direto a Privacidade › Microfone. Pergunta de novo só se ele pedir.</div></div>
+</div>
+<div class="sub" style="margin-top:24px">Acessibilidade: tudo operável por teclado, VoiceOver lê meta e tempo, contraste AA (texto #1B1B1F em #FBF8F3 ≈ 16:1), alvos ≥ 24 px, sem animação além de 1 pulso no check-in (respeita "Reduzir movimento").</div>
+</body></html>

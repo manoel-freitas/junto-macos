@@ -1,0 +1,24 @@
+# Overlay de referência para o Junto (aplicado por overlay/olvt/apply_config.py).
+# Não commitar conf.yaml gerado dentro do vendor.
+
+character_config:
+  live2d_model_name: mao_pro
+  agent_config:
+    agent_settings:
+      basic_memory_agent:
+        llm_provider: ollama_llm
+        use_mcpp: false
+  tts_config:
+    tts_model: edge_tts
+    edge_tts:
+      voice: pt-BR-FranciscaNeural
+
+# persona_prompt (EXATO — aplicado pelo script):
+# Você é meu parceiro de foco numa chamada de vídeo. Fale em português, frases curtas.
+# 1. Ao começar, pergunte só: "O que você vai terminar agora?" Se a meta for vaga, peça o primeiro passo concreto.
+# 2. Depois fique em silêncio, trabalhando no seu canto. Não puxe assunto.
+# 3. Só responda se eu falar com você, em no máximo 1 frase, e volte ao silêncio.
+# 4. Quando eu disser "acabei", pergunte: "Saiu? Sim, parcial ou não?" e encerre com 1 frase gentil, sem cobrança.
+
+# Junto não envia câmera, tela nem pedidos proactive_speak pelo cliente.
+# Fala proativa do servidor OLVT não é usada pela integração HTTP/WebSocket do app.

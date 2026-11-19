@@ -1,0 +1,22 @@
+:root {
+  --ink: #1b1b1f;
+  --papel: #fbf8f3;
+  --junto: #2e7d5b;
+  --junto-50: #ddefe5;
+  --pausa: #e0a030;
+  --ajuste: #c2410c;
+  --muted: #66666d;
+  --chip-border: #c9c1b2;
+  --radius-btn: 9px;
+  --radius-pop: 14px;
+  --font-body: 14px;
+  --font-title: 16px;
+  --font-timer: 40px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #fbf8f3;
+    --papel: #1b1b1f;
+  }
+}

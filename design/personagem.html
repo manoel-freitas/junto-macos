@@ -1,0 +1,46 @@
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="base.css"><style>
+.desk{position:relative;height:300px;border-radius:12px;background:linear-gradient(#5b6b7c,#3d4a58);overflow:hidden}
+.mb{height:22px;background:rgba(255,255,255,.85);font-size:11px;display:flex;justify-content:flex-end;gap:12px;align-items:center;padding:0 10px}
+.win{position:absolute;left:18px;top:40px;width:250px;height:200px;background:#f4f4f4;border-radius:8px;opacity:.9}
+.win:before{content:"seu editor / app atual";position:absolute;left:12px;top:10px;font-size:11px;color:#888}
+.ju{position:absolute;right:22px;bottom:18px}
+.bub{position:absolute;right:20px;bottom:128px;background:#FBF8F3;border-radius:12px;padding:10px 12px;font-size:12px;width:190px;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+.bub .btn{padding:4px 8px;font-size:11px}
+.sheet{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.st{background:#FBF8F3;border-radius:14px;padding:14px;text-align:center;font-size:12px}
+</style></head><body>
+<h1>Junto com personagem — a Ju fica no canto da tela</h1>
+<div class="sub">A Ju é uma janela flutuante transparente, sempre por cima e sem moldura, de 96 a 160 px. Cliques passam por ela, menos sobre o corpo. O popover da barra continua existindo para quem não quiser ver a Ju. Arte ilustrativa: a personagem final pode ser um modelo Live2D do Open-LLM-VTuber com este visual.</div>
+<div class="grid">
+<div><div class="cap">1. Sessão: Ju trabalhando em silêncio</div><div class="desk"><div class="mb"><b>●●</b> 18:42</div><div class="win"></div>
+<svg class="ju" width="110" height="110" viewBox="0 0 110 110"><ellipse cx="55" cy="100" rx="34" ry="6" fill="rgba(0,0,0,.25)"/><circle cx="55" cy="55" r="40" fill="#2E7D5B"/><circle cx="55" cy="55" r="40" fill="none" stroke="#DDEFE5" stroke-width="4"/><rect x="36" y="48" width="12" height="4" rx="2" fill="#FBF8F3"/><rect x="62" y="48" width="12" height="4" rx="2" fill="#FBF8F3"/><rect x="30" y="74" width="50" height="16" rx="4" fill="#1B1B1F"/><text x="55" y="86" font-size="9" fill="#DDEFE5" text-anchor="middle">18:42</text></svg></div>
+<div class="note">Olhos semicerrados, digitando num laptop com o timer. Respira devagar (1 ciclo a cada 4 s). Nada fala nem pisca.</div></div>
+
+<div><div class="cap">2. Check-in: Ju chama com balão</div><div class="desk"><div class="mb"><b>●●</b> 12:30</div><div class="win"></div>
+<div class="bub"><b>Ainda no PR do login?</b><br><span class="btn pri">Sim 1</span><span class="btn">Mudei 2</span><span class="btn">Pausa 3</span></div>
+<svg class="ju" width="110" height="110" viewBox="0 0 110 110"><ellipse cx="55" cy="100" rx="34" ry="6" fill="rgba(0,0,0,.25)"/><circle cx="55" cy="55" r="40" fill="#2E7D5B"/><circle cx="42" cy="50" r="6" fill="#FBF8F3"/><circle cx="68" cy="50" r="6" fill="#FBF8F3"/><circle cx="43" cy="51" r="3" fill="#1B1B1F"/><circle cx="69" cy="51" r="3" fill="#1B1B1F"/><path d="M45 70q10 7 20 0" stroke="#FBF8F3" stroke-width="3" fill="none"/><path d="M92 40l12-14" stroke="#2E7D5B" stroke-width="8" stroke-linecap="round"/></svg></div>
+<div class="note">Alerta em 3 níveis, do mais leve ao mais forte: (1) acena e o balão aparece; (2) se não houver resposta em 20 s, dá um pulinho; (3) som curto, só se ele ligar o som. Nunca rouba o foco do teclado; os atalhos 1/2/3 funcionam com ⌥ pressionado.</div></div>
+
+<div><div class="cap">3. Pausa: Ju toma um café</div><div class="desk"><div class="mb"><b style="color:#E0A030">●○</b> pausa</div><div class="win"></div>
+<div class="bub" style="width:150px"><b>Pausado. Sem pressa.</b><br><span class="btn pri">Voltar R</span></div>
+<svg class="ju" width="110" height="110" viewBox="0 0 110 110"><ellipse cx="55" cy="100" rx="34" ry="6" fill="rgba(0,0,0,.25)"/><circle cx="55" cy="55" r="40" fill="#E0A030"/><path d="M36 50q6-5 12 0M62 50q6-5 12 0" stroke="#1B1B1F" stroke-width="3" fill="none"/><rect x="66" y="66" width="18" height="18" rx="3" fill="#FBF8F3"/><path d="M72 62q2-6 0-10M78 62q2-6 0-10" stroke="#FBF8F3" stroke-width="2" fill="none"/></svg></div>
+<div class="note">Corpo âmbar, olhos fechados e contentes. O balão some sozinho em 10 s. A Ju não lembra da pausa nem cobra nada.</div></div>
+</div>
+
+<h2>Folha de estados da Ju</h2>
+<div class="sheet">
+<div class="st"><svg width="70" height="70" viewBox="0 0 110 110"><circle cx="55" cy="55" r="40" fill="none" stroke="#1B1B1F" stroke-width="5"/><circle cx="42" cy="52" r="4" fill="#1B1B1F"/><circle cx="68" cy="52" r="4" fill="#1B1B1F"/></svg><br><b>Parada</b><br>contorno, cochilando. Clique para começar.</div>
+<div class="st"><svg width="70" height="70" viewBox="0 0 110 110"><circle cx="55" cy="55" r="40" fill="#2E7D5B"/><rect x="36" y="48" width="12" height="4" rx="2" fill="#FBF8F3"/><rect x="62" y="48" width="12" height="4" rx="2" fill="#FBF8F3"/></svg><br><b>Trabalhando</b><br>verde, digita, respira.</div>
+<div class="st"><svg width="70" height="70" viewBox="0 0 110 110"><circle cx="55" cy="55" r="40" fill="#2E7D5B"/><circle cx="42" cy="50" r="6" fill="#FBF8F3"/><circle cx="68" cy="50" r="6" fill="#FBF8F3"/><path d="M45 70q10 7 20 0" stroke="#FBF8F3" stroke-width="3" fill="none"/></svg><br><b>Chamando</b><br>acena, balão, pulinho.</div>
+<div class="st"><svg width="70" height="70" viewBox="0 0 110 110"><circle cx="55" cy="55" r="40" fill="#2E7D5B"/><path d="M36 52q6-7 12 0M62 52q6-7 12 0" stroke="#FBF8F3" stroke-width="3" fill="none"/><path d="M40 68q15 12 30 0" stroke="#FBF8F3" stroke-width="3" fill="none"/><path d="M14 30l8 6M96 30l-8 6M55 6v10" stroke="#E0A030" stroke-width="4"/></svg><br><b>Acabou</b><br>comemora 2 s, pergunta "Saiu?".</div>
+<div class="st"><svg width="70" height="70" viewBox="0 0 110 110"><circle cx="55" cy="55" r="40" fill="#C2410C"/><circle cx="42" cy="52" r="4" fill="#FBF8F3"/><circle cx="68" cy="52" r="4" fill="#FBF8F3"/><path d="M45 72h20" stroke="#FBF8F3" stroke-width="3"/><text x="88" y="24" font-size="26" font-weight="800" fill="#C2410C">?</text></svg><br><b>Precisa de ajuste</b><br>sem motor, sem microfone. Balão explica.</div>
+</div>
+
+<h2>Regras de comportamento</h2>
+<div class="sub" style="font-size:13px;line-height:1.7">
+• Some sozinha em tela cheia, compartilhamento de tela, chamadas e modo Foco, e volta depois. Os alertas ficam na fila, sem perder nada.<br>
+• Arrastar para mudar de canto. Atalho ⌥⌘J mostra ou esconde. Tamanho P/M/G no menu.<br>
+• Alertas: acenar e balão são o padrão; som e notificação do macOS ficam desligados até ele ligar. No máximo 1 alerta a cada 10 min.<br>
+• Acessibilidade: o balão é lido pelo VoiceOver; com "Reduzir movimento", a Ju fica parada e só muda de cor e expressão. Estado nunca só pela cor: o balão sempre tem texto.<br>
+• Voz (Open-LLM-VTuber): só fala quando ele fala com ela ou no check-in, se a voz estiver ligada.
+</div></body></html>
