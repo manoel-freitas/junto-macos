@@ -16,6 +16,7 @@ São três por sessão: meta no início, meio do bloco, resultado no fim. Pausa 
 | ⌥D | Ajustes de distração |
 | ⌥B | Bem-estar |
 | ⌥I | Convites e horário |
+| ⌥A | Aparência da Ju (Live2D) |
 
 Com convite proativo na tela inicial, **1 / 2 / 3** respondem ao balão da Ju.
 

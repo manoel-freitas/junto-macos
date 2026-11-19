@@ -162,12 +162,34 @@ async function bootstrap(): Promise<void> {
       });
     });
 
+    await listen<{ noRecolor?: boolean }>("ju-live2d-reload", (ev) => {
+      if (ev.payload.noRecolor !== undefined) {
+        noRecolor = ev.payload.noRecolor;
+        shell.classList.toggle("ju--no-recolor", noRecolor);
+      }
+      reloadOlvtIframe();
+    });
+    await listen<{ noRecolor?: boolean }>("ju-appearance", (ev) => {
+      if (ev.payload.noRecolor !== undefined) {
+        noRecolor = ev.payload.noRecolor;
+        shell.classList.toggle("ju--no-recolor", noRecolor);
+      }
+    });
+
     void invoke("ju_pet_ready");
     void reportHitRegion();
     new ResizeObserver(() => void reportHitRegion()).observe(shell);
   } catch {
     setJuState("idle");
   }
+}
+
+let noRecolor = false;
+
+function reloadOlvtIframe(): void {
+  const olvt = document.querySelector("#ju-olvt") as HTMLIFrameElement;
+  if (!olvt) return;
+  olvt.src = `http://127.0.0.1:12393/?junto=${Date.now()}`;
 }
 
 const olvt = document.querySelector("#ju-olvt") as HTMLIFrameElement;

@@ -19,3 +19,7 @@ Escada: balão → após 20 s animação → som só se você ativar. Máximo um
 - Ju some em reunião, tela cheia e enquanto o silêncio manual de 1 h estiver ativo.
 
 Arraste pelo corpo do personagem para mover. O resto da janela deixa cliques passarem.
+
+## Trocar a aparência
+
+Em **Ajustes → Aparência** (atalho **⌥A**) você escolhe entre os 24 modelos da galeria gratuita Live2D. Veja [Aparência](aparencia.md).

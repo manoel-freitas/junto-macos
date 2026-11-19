@@ -124,7 +124,7 @@ mkdocs serve
 
 ## UI (8 telas do popover + ajustes)
 
-Ícone da barra: ○○ parado · ●● sessão + tempo · pulso no check-in · ●○ pausa · ●! ajuste (cor nunca é a única pista). Ajustes: distração (⌥D), bem-estar (⌥B), convites (⌥I).
+Ícone da barra: ○○ parado · ●● sessão + tempo · pulso no check-in · ●○ pausa · ●! ajuste (cor nunca é a única pista). Ajustes: distração (⌥D), bem-estar (⌥B), convites (⌥I), aparência (⌥A).
 
 ## Licença
 

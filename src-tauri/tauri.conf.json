@@ -25,6 +25,16 @@
         "alwaysOnTop": false
       },
       {
+        "label": "ajustes",
+        "title": "Junto — Ajustes",
+        "width": 1120,
+        "height": 780,
+        "visible": false,
+        "decorations": true,
+        "resizable": true,
+        "url": "aparencia.html"
+      },
+      {
         "label": "ju",
         "title": "Ju",
         "width": 128,
