@@ -31,6 +31,10 @@ Esses modelos **não** recebem filtro de cor no pet.
 
 Abra Aparência, escolha **Mao** e **Usar a Mao**.
 
+## Gestos no canto
+
+Quando a Ju muda de estado (sessão, pausa, chamando, etc.), o Junto tenta tocar o motion Live2D mapeado ao baixar o modelo. Se não houver gesto para aquele estado, o modelo fica no idle padrão.
+
 ## Depois de reiniciar o Mac
 
 A escolha fica salva em `~/Library/Application Support/com.manoelfreitas.junto/aparencia.json` e volta no próximo início do Junto.
