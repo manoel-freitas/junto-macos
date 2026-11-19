@@ -6,6 +6,7 @@ import { AparenciaMachine, type AparenciaMachineState } from "./machine";
 import { ModelDictUpdate } from "./model-dict";
 import { AparenciaScreen } from "../screens/aparencia";
 import type { FilterKind } from "./catalog";
+import { UseInstalled } from "./use-installed";
 
 const root = document.querySelector("#root") as HTMLElement;
 
@@ -98,7 +99,9 @@ async function handleUse(): Promise<void> {
   const id = machine.selectedId;
   const entry = Catalog.getById(id)!;
   const needsLicense = entry.otherLicense && !licenseAccepted.has(id);
-  if (!installedIds.has(id)) {
+  if (!UseInstalled.shouldDownloadBeforeUse(entry, installedIds)) {
+    /* cai no commit abaixo */
+  } else if (!installedIds.has(id)) {
     if (needsLicense) {
       machine = AparenciaMachine.needLicense(machine, id);
       render();
@@ -160,16 +163,21 @@ async function handleTest(): Promise<void> {
   const gestures = GestureMap.fromModel3(model3);
   const publicUrl = rel.startsWith("live2d-models") ? `/${rel}` : rel;
   const modelDict = ModelDictUpdate.buildEntry(entry, publicUrl, model3, gestures);
-  await AparenciaBridge.preview({
-    id,
-    olvtName: entry.olvtName,
-    noRecolor: entry.noRecolor,
-    model3Relative: rel,
-    gestures,
-    modelDict,
-    persistActive: false,
-    licenseAccepted: [...licenseAccepted],
-  });
+  try {
+    await AparenciaBridge.preview({
+      id,
+      olvtName: entry.olvtName,
+      noRecolor: entry.noRecolor,
+      model3Relative: rel,
+      gestures,
+      modelDict,
+      persistActive: false,
+      licenseAccepted: [...licenseAccepted],
+    });
+  } catch (e) {
+    machine = AparenciaMachine.fail(machine, entry.displayName, String(e));
+    render();
+  }
 }
 
 function handleCancel(): void {
