@@ -7,4 +7,5 @@ run/
 vendor/Open-LLM-VTuber/conf.yaml
 vendor/Open-LLM-VTuber/logs/
 vendor/Open-LLM-VTuber/models/
-vendor/Open-LLM-VTuber/.venv/
+vendor/Open-LLM-VTuber/.venv/site/
+site/
