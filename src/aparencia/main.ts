@@ -7,6 +7,7 @@ import { ModelDictUpdate } from "./model-dict";
 import { AparenciaScreen } from "../screens/aparencia";
 import type { FilterKind } from "./catalog";
 import { UseInstalled } from "./use-installed";
+import { applyAparenciaDemoEstado, parseDemoEstado } from "./demo-state";
 
 const root = document.querySelector("#root") as HTMLElement;
 
@@ -16,20 +17,7 @@ let licenseAccepted = new Set<string>();
 let selectedModel3: Model3Shape | null = null;
 let imagesLoaded = false;
 let unlisten: (() => void) | null = null;
-
-function forceStateFromQuery(): void {
-  const p = new URLSearchParams(location.search).get("estado");
-  if (p === "carregando") return;
-  machine = AparenciaMachine.imagesReady(machine);
-  if (p === "baixando") {
-    machine = AparenciaMachine.beginDownload(machine, "hiyori");
-    machine = AparenciaMachine.progress(machine, 45, 100);
-  } else if (p === "falha") {
-    machine = AparenciaMachine.fail(machine, "Hiyori", "timeout de rede");
-  } else if (p === "licenca") {
-    machine = AparenciaMachine.needLicense(machine, "jin");
-  }
-}
+const demoEstado = parseDemoEstado(location.search);
 
 async function refreshModel3(id: string): Promise<void> {
   if (!installedIds.has(id)) {
@@ -207,13 +195,27 @@ function handleAcceptLicense(): void {
 }
 
 async function boot(): Promise<void> {
-  forceStateFromQuery();
+  if (demoEstado) {
+    const applied = applyAparenciaDemoEstado(demoEstado, machine);
+    machine = applied.machine;
+    imagesLoaded = applied.imagesLoaded;
+  }
+
   const st = await AparenciaBridge.status();
-  machine = { ...machine, activeId: st.activeId, selectedId: st.activeId };
+  if (!demoEstado) {
+    machine = { ...machine, activeId: st.activeId, selectedId: st.activeId };
+  } else if (demoEstado === "carregando") {
+    machine = { ...machine, activeId: st.activeId, selectedId: st.activeId };
+  }
   installedIds = new Set(st.installed.map((i) => i.id));
   if (!installedIds.has("mao") && installedIds.size === 0) installedIds.add("mao");
   licenseAccepted = new Set(st.licenseAccepted);
   await refreshModel3(machine.selectedId);
+
+  if (demoEstado) {
+    render();
+    return;
+  }
 
   unlisten = AparenciaBridge.listenProgress(
     (id, received, total) => {
@@ -231,7 +233,11 @@ async function boot(): Promise<void> {
     done += 1;
     if (done >= imgs.length) {
       imagesLoaded = true;
-      machine = AparenciaMachine.imagesReady(machine);
+      if (!demoEstado) {
+        machine = AparenciaMachine.imagesReady(machine);
+      } else if (demoEstado === "carregando") {
+        machine = AparenciaMachine.imagesReady(machine);
+      }
       render();
     }
   };
@@ -244,7 +250,9 @@ async function boot(): Promise<void> {
   setTimeout(() => {
     if (!imagesLoaded) {
       imagesLoaded = true;
-      machine = AparenciaMachine.imagesReady(machine);
+      if (!demoEstado || demoEstado === "carregando") {
+        machine = AparenciaMachine.imagesReady(machine);
+      }
       render();
     }
   }, 2500);

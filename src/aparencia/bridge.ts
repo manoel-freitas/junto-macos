@@ -1,4 +1,5 @@
 import type { JuGestureMap, Model3Shape } from "./gestures";
+import { MAO_PRO_MODEL3_FIXTURE } from "./mao-model3-fixture";
 import type { ModelDictEntry } from "./model-dict";
 
 export interface AparenciaStatus {
@@ -45,6 +46,7 @@ export class AparenciaBridge {
 
   static async readModel3(id: string): Promise<Model3Shape> {
     if (!tauriOk()) {
+      if (id === "mao") return MAO_PRO_MODEL3_FIXTURE;
       return {
         FileReferences: {
           Motions: { Idle: [{ File: "motions/mtn_01.motion3.json" }] },

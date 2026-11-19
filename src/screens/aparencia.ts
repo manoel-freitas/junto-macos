@@ -7,6 +7,7 @@ import {
 } from "../aparencia/catalog";
 import { GestureMap } from "../aparencia/gestures";
 import type { AparenciaMachineState } from "../aparencia/machine";
+import { mountCardThumb, mountPreviewThumb } from "../aparencia/thumb-image";
 
 export interface AparenciaViewCtx {
   state: AparenciaMachineState;
@@ -56,10 +57,10 @@ export class AparenciaScreen {
       "Escolha quem fica com você no canto da tela. Dá para trocar quando quiser.";
     main.appendChild(sub);
     main.appendChild(AparenciaScreen.chips(ctx));
-    main.appendChild(AparenciaScreen.grid(ctx));
     if (ctx.state.phase === "baixando" || ctx.state.phase === "falha" || ctx.state.phase === "licenca") {
       main.appendChild(AparenciaScreen.overlay(ctx));
     }
+    main.appendChild(AparenciaScreen.grid(ctx));
     win.appendChild(main);
     win.appendChild(AparenciaScreen.preview(ctx));
     root.appendChild(win);
@@ -126,14 +127,12 @@ export class AparenciaScreen {
       card.appendChild(chk);
     }
     const im = document.createElement("div");
-    im.className = loading ? "aparencia-sk" : "aparencia-im";
-    if (!loading) {
-      const img = document.createElement("img");
-      img.alt = entry.displayName;
-      img.loading = "lazy";
-      img.src = entry.thumbUrl;
-      im.appendChild(img);
-    }
+    mountCardThumb(im, {
+      url: entry.thumbUrl,
+      label: entry.displayName,
+      skeleton: loading,
+      skeletonHeight: "96px",
+    });
     card.appendChild(im);
     const nm = document.createElement("div");
     nm.className = "aparencia-nm";
@@ -177,10 +176,12 @@ export class AparenciaScreen {
 
     const big = document.createElement("div");
     big.className = "aparencia-big";
-    const img = document.createElement("img");
-    img.alt = entry.displayName;
-    img.src = entry.thumbUrl;
-    big.appendChild(img);
+    mountPreviewThumb(big, {
+      url: entry.thumbUrl,
+      label: entry.displayName,
+      skeletonHeight: "190px",
+      imgClass: "aparencia-thumb-ph--big",
+    });
     prev.appendChild(big);
 
     const title = document.createElement("div");
@@ -210,10 +211,12 @@ export class AparenciaScreen {
     wnd.className = "wnd";
     const ju = document.createElement("div");
     ju.className = "ju";
-    const juImg = document.createElement("img");
-    juImg.src = activeEntry.thumbUrl;
-    juImg.alt = "Ju atual";
-    ju.appendChild(juImg);
+    mountPreviewThumb(ju, {
+      url: activeEntry.thumbUrl,
+      label: activeEntry.displayName,
+      skeletonHeight: "62px",
+      imgClass: "aparencia-thumb-ph--ju",
+    });
     desk.append(wnd, ju);
     prev.appendChild(desk);
 

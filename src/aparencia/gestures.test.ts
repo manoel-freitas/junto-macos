@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { GestureMap, type JuGestureMap, type Model3Shape } from "./gestures";
+import { MAO_PRO_MODEL3_FIXTURE } from "./mao-model3-fixture";
 
 function expectAllFive(g: JuGestureMap, label: string): void {
   const keys = ["parada", "chamando", "pausa", "acabou", "ajuste"] as const;
@@ -42,33 +43,7 @@ const HIYORI: Model3Shape = {
   },
 };
 
-/** Mao padrão: Idle + grupo sem nome com mtn/special + expressões. */
-const MAO: Model3Shape = {
-  FileReferences: {
-    Motions: {
-      Idle: [{ File: "motions/mtn_01.motion3.json" }],
-      "": [
-        { File: "motions/mtn_02.motion3.json" },
-        { File: "motions/mtn_03.motion3.json" },
-        { File: "motions/mtn_04.motion3.json" },
-        { File: "motions/special_01.motion3.json" },
-        { File: "motions/special_02.motion3.json" },
-        { File: "motions/special_03.motion3.json" },
-      ],
-    },
-    Expressions: [
-      { Name: "exp_01", File: "expressions/exp_01.exp3.json" },
-      { Name: "exp_02", File: "expressions/exp_02.exp3.json" },
-      { Name: "exp_03", File: "expressions/exp_03.exp3.json" },
-      { Name: "exp_04", File: "expressions/exp_04.exp3.json" },
-      { Name: "exp_05", File: "expressions/exp_05.exp3.json" },
-      { Name: "exp_06", File: "expressions/exp_06.exp3.json" },
-      { Name: "exp_07", File: "expressions/exp_07.exp3.json" },
-      { Name: "exp_08", File: "expressions/exp_08.exp3.json" },
-    ],
-  },
-  Groups: [{ Name: "EyeBlink", Target: "Parameter" }],
-};
+const MAO = MAO_PRO_MODEL3_FIXTURE;
 
 const NATORI: Model3Shape = {
   FileReferences: {
